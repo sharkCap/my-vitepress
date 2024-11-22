@@ -11,8 +11,8 @@ hero:
       text: 快速入门
       link: /markdown-examples
     - theme: alt
-      text: API 示例
-      link: /api-examples
+      text: Docker操作手册
+      link: /api-docker
     - theme: alt
       text: 新页面
       link: /new-page

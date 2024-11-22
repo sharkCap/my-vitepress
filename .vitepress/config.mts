@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   base: '/my-vitepress/',
-  title: "My Awesome Project",
+  title: "欢迎光临",
   description: "A VitePress Site",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -20,7 +20,7 @@ export default defineConfig({
         text: "Examples",
         items: [
           { text: "Markdown Examples", link: "/markdown-examples" },
-          { text: "Runtime API Examples", link: "/api-examples" },
+          { text: "Docker操作手册", link: "/api-docker" },
         ],
       },
       {
