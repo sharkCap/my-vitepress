@@ -5,7 +5,6 @@ export default defineConfig({
   base: "/my-vitepress/",
   title: "欢迎光临",
   description: "A VitePress Site",
-  cleanUrls: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
