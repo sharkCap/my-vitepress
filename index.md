@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: 快速入门
-      link: /markdown-examples
+      link: /guide/server/account
     - theme: alt
       text: Docker操作手册
-      link: /api-docker
+      link: /guide/docker/home
     - theme: alt
       text: 新页面
       link: /new-page
