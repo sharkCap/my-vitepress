@@ -12,7 +12,7 @@ hero:
       link: /guide/server/account
     - theme: alt
       text: Docker操作手册
-      link: /guide/docker/home
+      link: /guide/docker/command
     - theme: alt
       text: 新页面
       link: /new-page

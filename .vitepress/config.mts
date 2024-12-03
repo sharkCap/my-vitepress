@@ -21,21 +21,28 @@ export default defineConfig({
         items: [
           {
             text: "基本配置",
-            items: [{ text: "账户", link: "/guide/server/account" }],
+            link: "/guide/server/account",
           },
           {
             text: "部署",
             link: "/guide/server/deploy",
           },
-          {
-            text: "Nginx",
-            link: "/guide/server/nginx",
-          },
+        ],
+      },
+      {
+        text: "Nginx",
+        items: [
+          { text: "基本命令", link: "/guide/nginx/command" },
+          { text: "代理", link: "/guide/nginx/proxy" },
         ],
       },
       {
         text: "Docker",
-        items: [{ text: "指令", link: "/guide/docker/home" }],
+        items: [
+          { text: "基本命令", link: "/guide/docker/command" },
+          { text: "部署", link: "/guide/docker/deploy" },
+          { text: "镜像源", link: "/guide/docker/mirror" },
+        ],
       },
       {
         collapsed: true,
@@ -53,7 +60,7 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/vuejs/vitepress" },
     ],
-    outlineTitle: "文章标题",
+    outlineTitle: "标题",
     // 页脚
     footer: {
       message: "11111",

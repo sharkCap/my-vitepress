@@ -4,11 +4,11 @@ outline: deep
 
 # Nginx配置
 配置 Nginx 以反向代理到你的后端 API，并且确保前端页面能够访问
-### 1. 打开
+## 反向代理
+### 1. 配置
 ```bash
 sudo vim /etc/nginx/nginx.conf
 ```
-### 2. 编辑
 ```nginx
 server {
     listen       80;
@@ -34,12 +34,12 @@ server {
 }
 ```
 
-### 3. 检测
+### 2. 检测
 ```bash
 sudo nginx -t
 ```
 
-### 4. 重启
+### 3. 重启
 ```bash
 # 重启服务
 sudo systemctl restart nginx

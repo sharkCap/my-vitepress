@@ -22,10 +22,10 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 # 使用 nvm 安装 Node.js
 nvm install --lts
 ```
-如果node版本过高在**CentOS 7.6**中可能会安装失败，可选用[docker](../docker/home.md#docker-部署)方式进行安装。  
+如果node版本过高在**CentOS 7.6**中可能会安装失败，可选用[docker](../docker/deploy.md#docker-部署)方式进行安装。  
 
 ### 3. 安装 Nginx
-[Nginx配置](./nginx.md)
+[Nginx配置](../nginx/proxy.md)
 ```bash
 sudo yum install -y nginx
 ```
@@ -82,4 +82,4 @@ client.scp(
 
 
 ### 5. 后端
-[docker部署](../docker/home.md#docker-部署)
+[docker部署](../docker/deploy.md#docker-部署)
