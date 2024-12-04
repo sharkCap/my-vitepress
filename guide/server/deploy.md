@@ -81,5 +81,6 @@ client.scp(
 ```
 
 
-### 5. 后端
-[docker部署](../docker/deploy.md#docker-部署)
+### 5. 后端上传
+1. ``Xftp``工具
+2. [docker部署](../docker/deploy.md#docker-部署)

@@ -32,16 +32,24 @@ export default defineConfig({
       {
         text: "Nginx",
         items: [
-          { text: "基本命令", link: "/guide/nginx/command" },
+          { text: "基本指令", link: "/guide/nginx/command" },
           { text: "代理", link: "/guide/nginx/proxy" },
         ],
       },
       {
         text: "Docker",
         items: [
-          { text: "基本命令", link: "/guide/docker/command" },
+          { text: "基本指令", link: "/guide/docker/command" },
           { text: "部署", link: "/guide/docker/deploy" },
           { text: "镜像源", link: "/guide/docker/mirror" },
+        ],
+      },
+      {
+        text: "MongoDB",
+        items: [
+          { text: "安装", link: "/guide/mongoDB/main" },
+          { text: "基本指令", link: "/guide/mongoDB/command" },
+          { text: "后端交互", link: "/guide/mongoDB/express" },
         ],
       },
       {
