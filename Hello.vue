@@ -7,14 +7,6 @@
 <script lang="ts" setup>
 const clickHandle = () => {
     console.log('====clickHandle')
-    fetch('http://127.0.0.1:9969/list')
-    .then((res) => res.json())
-    .then((res) => {
-        console.log(res)
-    })
-    .catch((err) => {
-        console.log(err)
-    })
 }
 </script>
 <style>
