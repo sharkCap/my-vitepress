@@ -34,7 +34,14 @@ export default defineConfig({
         text: "Nginx",
         items: [
           { text: "基本指令", link: "/guide/nginx/command" },
-          { text: "代理", link: "/guide/nginx/proxy" },
+          { 
+            text: "配置", 
+            items: [
+              { text: "代理", link: "/guide/nginx/proxy" },
+              { text: "跨域", link: "/guide/nginx/cors" },
+              { text: "压缩", link: "/guide/nginx/gzip" },
+            ]
+          },
         ],
       },
       {

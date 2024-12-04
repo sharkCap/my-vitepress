@@ -2,10 +2,9 @@
 outline: deep
 ---
 
-# Nginx配置
+# 反向代理
 配置 Nginx 以反向代理到你的后端 API，并且确保前端页面能够访问
-## 反向代理
-### 1. 配置
+## 配置
 ```bash
 sudo vim /etc/nginx/nginx.conf
 ```
@@ -13,7 +12,7 @@ sudo vim /etc/nginx/nginx.conf
 server {
     listen       80;
     listen       [::]:80;
-    server_name  <host>;
+    server_name  <host>;    # 指定服务器的域名或IP地址
     root         /home/admin/test;  # 前端地址
     index        index.html;        # 入口文件
     location / {
@@ -22,24 +21,29 @@ server {
         # hash路由
         # try_files $uri $uri/ /index.html;
     }
-    # 接口转发
+    
     location /api {
-        proxy_pass http://localhost:3000;  # 后端的地址
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        # 将请求转发到后端应用服务
+        proxy_pass http://localhost:3000;
+
+        # 将原始请求的 Host 头部传递给后端
         proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        # 将客户端的真实 IP 地址传递给后端
+        proxy_set_header X-Real-IP $remote_addr;
+        # 保持 X-Forwarded-For 头，记录所有经过的代理地址
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # 将请求的协议（http 或 https）传递给后端
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 ```
 
-### 2. 检测
+## 检测
 ```bash
 sudo nginx -t
 ```
 
-### 3. 重启
+## 重启
 ```bash
 # 重启服务
 sudo systemctl restart nginx
@@ -48,9 +52,3 @@ sudo systemctl reload nginx
 # 或
 nginx -s reload
 ```
-| 操作    | 行为                       | 影响范围                   | 适用场景                       |
-| ------- | ------------------------- | -------------------------- | ----------------------------- |
-| restart | 停止并重新启动服务          | 有短暂中断，关闭所有现有连接 | 服务异常，模块更新，彻底重启所需 |
-| reload  | 重新加载配置文件，不重启服务 | 无中断，当前连接不受影响	    | 修改配置文件，避免中断连接      |
-
-
