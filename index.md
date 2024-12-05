@@ -6,6 +6,9 @@ hero:
   name: "首页"
   text: "VitePress 网站"
   tagline: 我的伟大项目标语
+  image:
+    src: http://shark-capt.oss-cn-shanghai.aliyuncs.com/uploads/dest.jpg
+    alt: VitePress
   actions:
     - theme: brand
       text: 快速入门
