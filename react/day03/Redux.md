@@ -7,7 +7,7 @@ outline: [1,6]
 > Redux 是 React 最常用的集中状态管理工具，类似于 Vue 中的 Pinia（Vuex），可以独立于框架运行
 > 作用：通过集中管理的方式管理应用的状态
 
-![image.png](../../assets/react/day03/1.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/1.png)
 **为什么要使用 Redux？**
 
 1. 独立于组件，无视组件之间的层级关系，简化通信问题
@@ -20,7 +20,7 @@ outline: [1,6]
 
 > 需求：不和任何框架绑定，不使用任何构建工具，使用纯 Redux 实现计数器
 
-![image.png](../../assets/react/day03/2.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/2.png)
 使用步骤：
 
 1. 定义一个 reducer 函数 （根据当前想要做的修改返回一个新的状态）
@@ -80,7 +80,7 @@ outline: [1,6]
 
 > Redux 的难点是理解它对于数据修改的规则, 下图动态展示了在整个数据的修改中，数据的流向
 
-![1](../../assets/react/day03/3.png)
+![1](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/3.png)
 为了职责清晰，Redux 代码被分为三个核心的概念，我们学 redux，其实就是学这三个核心概念之间的配合，三个概念分别是:
 
 1. state: 一个对象 存放着我们管理的数据
@@ -99,7 +99,7 @@ outline: [1,6]
 
 2. react-redux - 用来 链接 Redux 和 React 组件 的中间件
 
-![image.png](../../assets/react/day03/4.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/4.png)
 
 ## 2. 配置基础环境
 
@@ -123,7 +123,7 @@ npm run start
 
 ## 3. store 目录结构设计
 
-![image.png](../../assets/react/day03/5.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/5.png)
 
 1. 通常集中状态管理的部分都会单独创建一个单独的 `store` 目录
 
@@ -135,7 +135,7 @@ npm run start
 
 ## 1. 整体路径熟悉
 
-![image.png](../../assets/react/day03/6.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/6.png)
 
 ## 2. 使用 React Toolkit 创建 counterStore
 
@@ -208,27 +208,27 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
 > 在 React 组件中使用 store 中的数据，需要用到一个钩子函数 - useSelector，它的作用是把 store 中的数据映射到组件中，使用样例如下：
 
-![image.png](../../assets/react/day03/7.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/7.png)
 
 ## 5. React 组件修改 store 中的数据
 
 > React 组件中修改 store 中的数据需要借助另外一个 hook 函数 - useDispatch，它的作用是生成提交 action 对象的 dispatch 函数，使用样例如下：
 
-![image.png](../../assets/react/day03/8.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/8.png)
 
 # Redux 与 React - 提交 action 传参
 
 > 需求：组件中有俩个按钮 `add to 10` 和 `add to 20` 可以直接把 count 值修改到对应的数字，目标 count 值是在组件中传递过去的，需要在提交 action 的时候传递参数
 
-![image.png](../../assets/react/day03/9.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/9.png)
 实现方式：在 reducers 的同步修改方法中添加 action 对象参数，在调用 actionCreater 的时候传递参数，参数会被传递到 action 对象 payload 属性上
 
-![image.png](../../assets/react/day03/10.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/10.png)
 
 # Redux 与 React - 异步 action 处理
 
 **需求理解**
-![image.png](../../assets/react/day03/11.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/11.png)
 
 **实现步骤**
 
@@ -306,13 +306,13 @@ export default App;
 
 > Redux 官方提供了针对于 Redux 的调试工具，支持实时 state 信息展示，action 提交信息查看等
 
-![image.png](../../assets/react/day03/12.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/12.png)
 
 # 美团小案例
 
 ## 1. 案例演示
 
-![image.png](../../assets/react/day03/13.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/13.png)
 
 > 基本开发思路：使用 RTK（Redux Toolkit）来管理应用状态, 组件负责 数据渲染 和 dispatch action
 
@@ -344,7 +344,7 @@ npm run start
 
 ## 3. 分类和商品列表渲染
 
-![image.png](../../assets/react/day03/14.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/14.png)
 1- 编写 store 逻辑
 
 ```javascript
@@ -438,7 +438,7 @@ export default App;
 
 ## 4. 点击分类激活交互实现
 
-![image.png](../../assets/react/day03/15.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/15.png)
 1- 编写 store 逻辑
 
 ```javascript
@@ -504,7 +504,7 @@ const Menu = () => {
 
 ## 5. 商品列表切换显示
 
-![image.png](../../assets/react/day03/16.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/16.png)
 
 ```jsx
 <div className="list-content">
@@ -529,7 +529,7 @@ const Menu = () => {
 
 ## 6. 添加购物车实现
 
-![image.png](../../assets/react/day03/17.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/17.png)
 1- 编写 store 逻辑
 
 ```javascript
@@ -594,7 +594,7 @@ export default reducer;
 
 ## 7. 统计区域实现
 
-![image.png](../../assets/react/day03/18.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/18.png)
 
 实现思路
 
@@ -624,7 +624,7 @@ const totalPrice = cartList.reduce((a, c) => a + c.price * c.count, 0);
 
 ## 8. 购物车列表功能实现
 
-![image.png](../../assets/react/day03/19.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/19.png)
 
 1-控制列表渲染
 
@@ -716,7 +716,7 @@ clearCart (state) {
 
 ## 9. 控制购物车显示和隐藏
 
-![image.png](../../assets/react/day03/20.png)
+![image.png](https://shark-capt.oss-cn-shanghai.aliyuncs.com/vitepress/assets/react/day03/20.png)
 
 ```jsx
 // 控制购物车打开关闭的状态
