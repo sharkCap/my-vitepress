@@ -60,12 +60,22 @@ node -v
 docker start <container_name_or_id>
 
 # 停止容器
-sudo docker stop express-container
+docker stop express-container
 ```
 ### 删除容器
 ```bash
 # 删除容器（需要先停止）
-sudo docker rm express-container
+docker rm express-container
+
+# 一条命令停止并删除容器
+docker rm -f express-container
+
+# 重新构建镜像（会自动覆盖旧镜像）
+docker build -t express-app .
+
+# 运行新容器
+docker run -d -p 9969:9969 --name express-container --network myapp-network express-app
+
 ```
 ### 查看日志
 ```bash
