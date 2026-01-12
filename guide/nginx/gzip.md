@@ -2,11 +2,21 @@
 outline: deep
 ---
 
-# 压缩
+# Gzip 压缩
 
-开启gzip压缩
+::: info 📖 为什么要开启 Gzip？
+Gzip 可以压缩响应内容，减少传输大小，显著提升网站加载速度。
 
-## 配置
+| 文件类型 | 压缩前 | 压缩后 | 压缩率 |
+|----------|--------|--------|--------|
+| JS 文件 | 200KB | 50KB | 75% |
+| CSS 文件 | 100KB | 20KB | 80% |
+| HTML 文件 | 50KB | 15KB | 70% |
+:::
+
+## 一、配置示例
+
+在 `http` 块中添加 Gzip 配置：
 
 ```bash
 sudo vim /etc/nginx/nginx.conf
@@ -14,65 +24,71 @@ sudo vim /etc/nginx/nginx.conf
 
 ```nginx
 http {
-    # 启用 Gzip 压缩
+    # 启用 Gzip
     gzip on;
 
-    # 允许压缩的最低文件大小，文件大小小于此值不会被压缩，默认为 0（即压缩所有内容）
-    gzip_min_length 1024;  # 设置为 1KB，只有超过 1KB 的文件才会被压缩
+    # 最小压缩文件大小（小于该值不压缩）
+    gzip_min_length 1k;
 
-    # 设置压缩的级别，范围为 1 - 9，越高压缩比越大，但会消耗更多的 CPU 资源
-    gzip_comp_level 6;  # 设置为 6，平衡压缩效果与 CPU 使用
+    # 压缩级别 1-9，越高压缩率越大，CPU 消耗越高
+    gzip_comp_level 6;
 
-    # 设置可以被压缩的 MIME 类型，确保支持文本、JSON、CSS、JS 文件的压缩
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss application/font-woff application/font-woff2 image/svg+xml;
+    # 需要压缩的文件类型
+    gzip_types
+        text/plain
+        text/css
+        text/javascript
+        application/json
+        application/javascript
+        application/xml
+        image/svg+xml;
 
-    # 启用压缩时使用的 HTTP 版本
-    gzip_http_version 1.1;  # 针对 HTTP/1.1 开启 gzip
+    # 添加 Vary 头（缓存支持）
+    gzip_vary on;
 
-    # 代理服务器响应也可以进行 gzip 压缩
-    gzip_proxied any;  # 支持任何代理的响应进行 gzip 压缩
+    # 禁用 IE6 的 Gzip
+    gzip_disable "msie6";
 
-    # 禁用对某些特定浏览器的 gzip 压缩，如 IE6
-    gzip_disable "msie6";  # 禁用对 IE6 的 gzip 压缩
-
-    # 启用 Vary: Accept-Encoding 头，帮助缓存系统区分压缩和非压缩版本
-    gzip_vary on;  # 启用 Vary: Accept-Encoding，缓存压缩的内容
-
-    # 设置允许的最大缓冲区大小，影响压缩的速度和效率
-    gzip_buffers 16 8k;  # 16 个 8KB 的缓冲区
-
-    # 设置压缩时的缓冲区
-    gzip_proxied any;  # 允许任何代理服务器的响应进行 gzip 压缩
-
-    # 继续其他常规的 Nginx 配置项
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
-
-    server {
-        listen 80;
-        server_name example.com;
-
-        location / {
-            # 使用 gzip 压缩所有请求
-            try_files $uri $uri/ /index.html;
-        }
-    }
+    # ... 其他配置
 }
 ```
 
-## 检测
+**关键配置说明：**
+
+| 配置项 | 建议值 | 说明 |
+|--------|--------|------|
+| `gzip_comp_level` | 5-6 | 压缩级别，太高会增加 CPU 负担 |
+| `gzip_min_length` | 1k | 小文件不压缩，避免负优化 |
+| `gzip_types` | 文本类 | 图片/视频已压缩，无需再压 |
+
+## 二、生效配置
 
 ```bash
+# 1. 检查配置语法
 sudo nginx -t
+
+# 2. 重新加载配置
+sudo nginx -s reload
 ```
 
-## 重启
+## 三、验证压缩是否生效
+
+### 方法一：命令行
 
 ```bash
-# 重启服务
-sudo systemctl restart nginx
-# 重新加载配置
-sudo systemctl reload nginx
-# 或
-nginx -s reload
+curl -H "Accept-Encoding: gzip" -I http://你的域名/
 ```
+
+如果看到 `Content-Encoding: gzip` 则表示压缩生效。
+
+### 方法二：浏览器 DevTools
+
+1. 打开 Chrome DevTools (F12)
+2. 切换到 Network 面板
+3. 查看响应头中是否有 `Content-Encoding: gzip`
+
+::: tip 💡 注意事项
+- 图片、视频等已压缩的文件无需 Gzip
+- 小于 1KB 的文件压缩后可能反而更大
+- 压缩级别设置过高会增加 CPU 负担
+:::
