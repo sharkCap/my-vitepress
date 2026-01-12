@@ -2,16 +2,26 @@
 outline: deep
 ---
 
-# MongoDB
-## Winods 安装
-### 安装MongoDB
+# MongoDB 安装指南
+
+::: info 📖 什么是 MongoDB？
+MongoDB 是一个基于文档的 NoSQL 数据库，数据以 JSON 格式存储，灵活易用。  
+对于前端开发者来说，数据结构与 JavaScript 对象很相似，上手容易！
+:::
+
+## 一、Windows 安装
+
+### 1.1 安装 MongoDB Server
 #### 1. 下载
 [MongoDB Community Server](https://www.mongodb.com/try/download/community)
+
 #### 2. 配置环境变量
 环境变量 > 系统变量 > Path > 新增  
-例如：``D:\Program Files\MongoDB\Server\8.0\bin``  
-目的是可以使用 `mongod` 命令
-#### 3. 启动
+例如：`D:\Program Files\MongoDB\Server\8.0\bin`  
+
+配置后可以在任意位置使用 `mongod` 命令。
+
+#### 3. 启动服务
 创建数据库文件的存放位置
 > 在你data的目录下，创建一个db文件
 
@@ -24,16 +34,18 @@ mongod --dbpath 'D:\Program Files\MongoDB\Server\8.0\data\db'
 在浏览器中输入地址和端口号：http://localhost:27017
 
 
-### 安装 MongoDB Shell
-因新版本没有 `mongo`指令,使用 `mongosh` 代替
+### 1.2 安装 MongoDB Shell
+
+新版 MongoDB 不再自带 `mongo` 命令，需要单独安装 `mongosh`。
+
 #### 1. 下载
-[MongoDB Shell](https://www.mongodb.com/try/download/shell)  
-使用 MongoDB Shell（mongosh）来连接数据库，功能和 mongo 相似
+[MongoDB Shell](https://www.mongodb.com/try/download/shell)
+
 #### 2. 配置环境变量
 环境变量 > 系统变量 > Path > 新增  
-例如：`C:\mongosh-2.3.4-win32-x64\bin`  
-目的是可以使用 `mongosh` 命令
-#### 2. 连接数据库
+例如：`C:\mongosh-2.3.4-win32-x64\bin`
+
+#### 3. 连接数据库
 ```bash
 # 默认
 mongosh
@@ -42,56 +54,94 @@ mongosh
 mongosh --host localhost --port 27017
 ```
 
-### 图形化界面
-#### MongoDB Compass
-[MongoDB Compass](https://www.mongodb.com/try/download/compass)
-#### VSCode插件
-[Database Client](https://marketplace.visualstudio.com/items?itemName=cweijan.dbclient-jdbc)
+### 1.3 图形化工具（可选）
 
-## Docker 安装
-服务器中使用docker安装
-### 1. 下载
+| 工具 | 说明 |
+|------|------|
+| [MongoDB Compass](https://www.mongodb.com/try/download/compass) | 官方图形化工具 |
+| [Database Client](https://marketplace.visualstudio.com/items?itemName=cweijan.dbclient-jdbc) | VS Code 插件，轻量级 |
+
+## 二、Docker 安装（服务器推荐）
+### 2.1 拉取镜像
 ```bash
 # 最新镜像
-docker pull mongo
+sudo docker pull mongo
 
-# 指定版本
-docker pull mongo:6.0
+# 指定版本（推荐）
+sudo docker pull mongo:6
 ```
 
-### 2. 运行
-#### 持久化
+### 2.2 运行容器
+
+#### 数据持久化（推荐）
 ```bash
-docker run -d \
+sudo docker run -d \
   --name mongodb \
   -p 27017:27017 \
   -v /data/mongodb:/data/db \
   -e MONGO_INITDB_ROOT_USERNAME=admin \
   -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
-  mongo
+  mongo:6
 ```
-::: tip
-- --name mongodb：容器名称，方便管理。
-- -p 27017:27017：将 MongoDB 的默认端口映射到主机，方便访问。
-- **-v /data/mongodb:/data/db：将宿主机目录 /data/mongodb 挂载到容器中的 /data/db，确保数据持久化。**
-- -e MONGO_INITDB_ROOT_USERNAME 和 MONGO_INITDB_ROOT_PASSWORD：设置 MongoDB 的管理员用户名和密码。
+
+**参数说明：**
+
+| 参数 | 说明 |
+|------|------|
+| `--name mongodb` | 容器名称 |
+| `-p 27017:27017` | 端口映射 |
+| `-v /data/mongodb:/data/db` | 数据持久化到宿主机 |
+| `-e MONGO_INITDB_ROOT_USERNAME` | 管理员用户名 |
+| `-e MONGO_INITDB_ROOT_PASSWORD` | 管理员密码 |
+
+#### 多容器场景（与 Express 配合）
+
+如果你的 Express 也运行在 Docker 中，建议使用内部网络：
+
+```bash
+# 1. 创建网络
+sudo docker network create app-net
+
+# 2. 运行 MongoDB（不暴露端口到外网，更安全）
+sudo docker run -d \
+  --name mongodb \
+  --network app-net \
+  -v /data/mongodb:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  mongo:6
+```
+
+这样 Express 容器可以通过 `mongodb://admin:admin123@mongodb:27017` 连接。
+
+> 详见 [Docker 网络配置](../docker/network.md)
+
+#### 不挂载卷（不推荐）
+
+::: warning ❗ 数据会丢失
+不挂载卷的方式，容器删除后数据会丢失！仅适合测试。
 :::
-#### Docker 内部存储
-Docker 内部的存储方式，不挂载宿主机的目录。这种方式会将数据存储在 Docker 容器的内部文件系统中（容器停止或删除后数据会丢失
 ```bash
 docker run -d \
   --name mongodb \
   -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=admin \
   -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
-  mongo
+  mongo:6
 ```
 
-### 3. 连接
+### 2.3 连接数据库
+
 ```bash
 # 进入容器连接
-docker exec -it mongodb mongosh
+sudo docker exec -it mongodb mongosh -u admin -p admin123
 
-# 远程连接
-mongosh mongodb://admin:admin123@<server_ip>:27017
+# 远程连接（需要暴露端口）
+mongosh "mongodb://admin:admin123@<服务器IP>:27017"
 ```
+
+::: tip 💡 下一步
+安装完成后，可以学习：
+- [基本指令](./command.md) - 数据库和集合的操作命令
+- [后端交互](./express.md) - Express + Mongoose 实战
+:::

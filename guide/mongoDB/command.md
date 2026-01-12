@@ -2,233 +2,202 @@
 outline: deep
 ---
 
-# 基本指令
+# MongoDB 基本指令
 
-## 状态
+::: tip 💻 在哪里执行这些命令？
+1. **Windows**：打开终端，输入 `mongosh` 连接数据库
+2. **Docker**：`docker exec -it mongodb mongosh -u admin -p 密码`
+3. **图形化工具**：MongoDB Compass 或 VS Code 插件
+:::
 
-### 查看
+## 一、数据库操作
 
-```bash
-tasklist | findstr mongod
-```
-
-> 或者直接访问 http://127.0.0.1:27017/
-
-### 启动
-
-```bash
-# 指定(命令)
-mongod --dbpath "D:\Program Files\MongoDB\Server\8.0\data\db"
-
-# 默认(服务)
-net start MongoDB
-```
-
-> 配置文件 _D:\Program Files\MongoDB\Server\8.0\data_ `mongod.cfg`  
-> 如果没有通过 `mongod --dbpath` 命令手动指定数据存储路径，MongoDB 会使用这个配置文件
-> 中的 dbPath。
-
-```yaml
-# Where and how to store data.
-storage:
-  dbPath: D:\Program Files\MongoDB\Server\8.0\data
-```
-
-### 停止
-
-```bash
-# 如果 MongoDB 是作为服务运行的
-net stop MongoDB
-
-# 如果 MongoDB 是以命令行方式运行的
-Ctrl + C
-```
-
-## 用户
-
-### 创建账户
-
-```bash
-# 切换到admin数据库
-use admin
-
-# 添加管理员用户
-db.createUser({user: "root", pwd: "123456", roles: ["root"]})
-```
-
-### 查看
-
-```bash
-# 查看当前数据库的所有用户
-show users
-db.getUsers()
-# 查看用户信息
-db.getUser("root")
-# 查看所有数据库中的用户
-db.system.users.find()
-```
-
-### 删除
-
-```bash
-db.dropUser("myUser")
-```
-
-### 修改
-
-```bash
-# 修改权限
-db.updateUser("myUser", {
-  roles: [
-    { role: "readWrite", db: "test" },
-    { role: "dbAdmin", db: "test" }
-  ]
-})
-
-# 修改密码
-db.updateUser("myUser", {
-  pwd: "newPassword"
-})
-```
-
-### 启用身份验证
-
-编辑 `mongod.conf` 配置文件，将 security.authorization 设置为 enabled，然后重启 MongoDB 服务
-
-```yaml
-security:
-  authorization: "enabled"
-```
-
-启用身份验证后，使用管理员登录
-
-```bash
-mongosh --host localhost --port 27017 -u admin -p adminPassword --authenticationDatabase admin
-```
-
-## 操作数据库
-
-### 查看
+### 1.1 查看数据库
 
 ```bash
 show dbs
 ```
 
-### 创建和切换
-
-如果数据库不存在，MongoDB 会在插入数据时自动创建
+### 1.2 创建/切换数据库
 
 ```bash
+# 如果数据库不存在，插入数据时会自动创建
 use your_database
 ```
 
-### 删除
+### 1.3 删除数据库
 
 ```bash
 db.dropDatabase()
 ```
 
-::: warning
-注意： 删除数据库是不可逆的，请谨慎操作。
+::: warning ⚠️ 注意
+删除数据库是不可逆的，请谨慎操作！
 :::
 
-## 操作集合（表）
+## 二、集合操作（表）
 
-### 查看集合
+### 2.1 查看集合
 
 ```bash
 show collections
-# 或者
-db.getCollectionNames()
 ```
 
-### 创建集合
+### 2.2 创建集合
 
 ```bash
-# 创建一个名为 users 的集合
+# 方式一：显式创建
 db.createCollection("users")
+
+# 方式二：插入数据时自动创建（更常用）
+db.users.insertOne({ name: "John", age: 30 })
 ```
 
-> 插入一条记录到 users 集合，MongoDB 会自动创建该集合
+### 2.3 删除集合
 
 ```bash
-# 创建一个名为 users 的集合
-db.users.insertOne({ name: "John Doe", age: 30 })
-```
-
-### 删除集合
-
-```bash
-# 删除 users 集合
 db.users.drop()
 ```
 
-### 查看集合详细信息
+## 三、文档操作（CRUD）
 
-```bash
-# 查看 users 集合的统计信息
-db.users.stats()
-```
-
-### 插入文档到集合
+### 3.1 插入文档（Create）
 
 ```bash
 # 插入一条
-db.users.insertOne({ name: "Alice", age: 25, city: "New York" })
+db.users.insertOne({ name: "Alice", age: 25, city: "Beijing" })
 
-# 插入多条文档
+# 插入多条
 db.users.insertMany([
-  { name: "Bob", age: 28, city: "San Francisco" },
-  { name: "Charlie", age: 32, city: "Los Angeles" }
+  { name: "Bob", age: 28, city: "Shanghai" },
+  { name: "Charlie", age: 32, city: "Guangzhou" }
 ])
 ```
 
-### 查询集合中的文档
+### 3.2 查询文档（Read）
 
 ```bash
-# 查询 users 集合中所有的文档
+# 查询所有
 db.users.find()
 
-# 美化输出
-db.users.find().pretty()
+# 条件查询
+db.users.find({ age: { $gt: 25 } })  # age > 25
+
+# 只返回指定字段
+db.users.find({}, { name: 1, age: 1 })
+
+# 查询一条
+db.users.findOne({ name: "Alice" })
 ```
 
-### 删除文档
+**常用查询操作符：**
+
+| 操作符 | 说明 | 示例 |
+|--------|------|------|
+| `$gt` | 大于 | `{ age: { $gt: 25 } }` |
+| `$gte` | 大于等于 | `{ age: { $gte: 25 } }` |
+| `$lt` | 小于 | `{ age: { $lt: 30 } }` |
+| `$lte` | 小于等于 | `{ age: { $lte: 30 } }` |
+| `$ne` | 不等于 | `{ name: { $ne: "Alice" } }` |
+| `$in` | 在数组中 | `{ city: { $in: ["Beijing", "Shanghai"] } }` |
+
+### 3.3 更新文档（Update）
 
 ```bash
-# 删除 users 集合中第一个匹配的文档
-db.users.deleteOne({ name: "Alice" })
-
-# 删除所有符合条件的文档
-db.users.deleteMany({ city: "New York" })
-```
-
-### 更新文档
-
-```bash
-# 将 users 集合中 name 为 "Alice" 的用户的年龄修改为 26
+# 更新一条
 db.users.updateOne(
   { name: "Alice" },
   { $set: { age: 26 } }
 )
 
-# 更新多个文档
+# 更新多条
 db.users.updateMany(
-  { city: "New York" },
-  { $set: { city: "Boston" } }
+  { city: "Beijing" },
+  { $set: { city: "北京" } }
 )
 ```
 
-### 创建索引
+### 3.4 删除文档（Delete）
 
 ```bash
-# 在 users 集合中为 name 字段创建索引
-db.users.createIndex({ name: 1 })
+# 删除一条
+db.users.deleteOne({ name: "Alice" })
+
+# 删除多条
+db.users.deleteMany({ city: "Beijing" })
+
+# 删除所有（清空集合）
+db.users.deleteMany({})
 ```
 
-### 查看集合的索引
+## 四、用户管理
+
+### 4.1 创建用户
 
 ```bash
-# 查看 users 集合的索引
+# 切换到 admin 数据库
+use admin
+
+# 创建管理员用户
+db.createUser({
+  user: "admin",
+  pwd: "123456",
+  roles: ["root"]
+})
+
+# 创建普通用户（只能操作指定数据库）
+use mydb
+db.createUser({
+  user: "appuser",
+  pwd: "123456",
+  roles: [{ role: "readWrite", db: "mydb" }]
+})
+```
+
+### 4.2 查看用户
+
+```bash
+show users
+```
+
+### 4.3 删除用户
+
+```bash
+db.dropUser("appuser")
+```
+
+## 五、索引
+
+索引可以提高查询性能，类似书的目录。
+
+```bash
+# 创建索引
+db.users.createIndex({ name: 1 })  # 1 升序，-1 降序
+
+# 创建唯一索引
+db.users.createIndex({ email: 1 }, { unique: true })
+
+# 查看索引
 db.users.getIndexes()
+
+# 删除索引
+db.users.dropIndex("name_1")
 ```
+
+## 六、Windows 服务管理
+
+::: details Windows 专用命令
+```bash
+# 查看 MongoDB 进程
+tasklist | findstr mongod
+
+# 启动服务
+net start MongoDB
+
+# 停止服务
+net stop MongoDB
+
+# 命令行启动（指定数据目录）
+mongod --dbpath "D:\MongoDB\data\db"
+```
+:::
