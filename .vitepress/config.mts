@@ -55,9 +55,12 @@ export default defineConfig({
         {
           text: "Docker",
           items: [
-            { text: "基本指令", link: "/guide/docker/command" },
-            { text: "部署", link: "/guide/docker/deploy" },
+            { text: "入门指南", link: "/guide/docker/index" },
             { text: "镜像源", link: "/guide/docker/mirror" },
+            { text: "部署", link: "/guide/docker/deploy" },
+            { text: "常用命令", link: "/guide/docker/command" },
+            { text: "网络配置", link: "/guide/docker/network" },
+            { text: "Compose", link: "/guide/docker/compose" },
           ],
         },
         {

@@ -144,28 +144,81 @@ docker build -t &lt;image_name&gt;:&lt;tag&gt; .
 如果安装失败 请尝试[更换镜像](../docker/mirror.md)并单独安装
 
 ### 3. 运行容器
+
+**基础命令：**
 ```bash
 docker run -d -p 9969:9969 --name express-container express-app:latest
 ```
-::: tip
-- -d：后台运行容器。
-- -p 3000:3000：将容器的 3000 端口映射到服务器的 3000 端口  
-- --name：为容器命名
-:::
->完整版
+
+**参数说明：**
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `-d` | 后台运行容器 | - |
+| `-p` | 端口映射 `主机端口:容器端口` | `-p 3000:3000` |
+| `--name` | 为容器命名 | `--name express-container` |
+| `-v` | 挂载数据卷（数据持久化） | `-v /host/path:/container/path` |
+| `--network` | 加入指定网络 | `--network app-net` |
+| `-e` | 设置环境变量 | `-e NODE_ENV=production` |
+| `--restart` | 自动重启策略 | `--restart unless-stopped` |
+
+#### 多容器场景（推荐）
+
+当你的项目需要连接数据库（如 MongoDB）时，需要将容器加入同一网络：
+
 ```bash
-# 构建运行容器
-# --name 指定容器名称为 express-container
-# -p 指定外部端3000于容器内3000端口连接，从而可以通过主机的 3000 端口来访问容器内的服务
-#    要记得<container_port>这个端口被nginx监听到，因为nginx默认监听80端口而已
-# -v 代表绑定卷 也就是本地的 dist 文件如果变更 容器内的 dist文件也会做出相应改变
-#    -v 两侧均需要使用绝对路径
-# -d 表示在后台运行
-# 最后的 express-app:latest 表示使用指定的镜像
-# docker run --name container_name -p <host>:<container> -v <path> -d <name>:<tag>
-docker run --name express-container -p 3000:3000 -v D:\a\b\c -d express-app:latest
+# 1. 创建网络
+docker network create app-net
+
+# 2. 运行 MongoDB 容器
+docker run -d \
+  --name mongo-container \
+  --network app-net \
+  -v mongo-data:/data/db \
+  mongo:6
+
+# 3. 运行 Express 容器（加入同一网络）
+docker run -d \
+  --name express-container \
+  --network app-net \
+  -p 9969:9969 \
+  express-app:latest
 ```
+
+::: info 💡 `--network` 的作用
+将容器加入同一网络后：
+- 容器之间可以用**容器名**互相访问（Docker 会自动做 DNS 解析）
+- 例如在 Express 中可以用 `mongodb://mongo-container:27017` 连接数据库
+- 不需要暴露数据库端口到主机，更安全！
+
+**不使用网络的话**：容器之间无法通过容器名通信，只能用 `--link`（已废弃）或宿主机 IP
+:::
+
+> 更多网络配置详见 [Docker 网络配置](./network.md)
+
+#### 完整示例
+
+```bash
+# 生产环境推荐配置
+docker run -d \
+  --name express-container \
+  --network app-net \
+  -p 9969:9969 \
+  -v /data/logs:/usr/src/app/logs \
+  -e NODE_ENV=production \
+  --restart unless-stopped \
+  express-app:latest
+```
+
 >查看 PM2 进程列表
 ```bash
 sudo docker exec express-container pm2 list
 ```
+
+## 四、下一步
+
+🎉 恭喜你完成了第一个 Docker 部署！接下来可以学习：
+
+- [常用命令](./command.md) - 掌握日常运维操作
+- [网络配置](./network.md) - 多容器通信详解
+- [Docker Compose](./compose.md) - 一键部署多容器应用
