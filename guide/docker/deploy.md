@@ -3,8 +3,21 @@ outline: deep
 ---
 
 # Docker 部署
+
+::: info 📖 什么是 Docker？
+Docker 是一个容器化平台，可以将应用程序和其依赖打包成一个独立的「容器」。  
+**好处：** 在你电脑上能跑的程序，打包成 Docker 镜像后，在任何服务器上都能跑，再也不用担心「在我电脑上明明可以的」这种问题！
+:::
+
+::: tip 🗺️ 阅读顺序建议
+1. **本文 (deploy.md)** - Docker 安装 + 项目部署（核心）
+2. [镜像源配置](./mirror.md) - 解决下载慢的问题
+3. [常用命令](./command.md) - 日常运维查阅
+:::
+
 ## 一、安装 Docker
-在 CentOS 上安装 Docker
+
+### 在 CentOS 上安装 Docker
 ```bash
 # 更新系统软件包（无需重复更新）
 sudo yum update -y
@@ -21,7 +34,27 @@ sudo systemctl enable docker
 docker --version
 ```
 输出类似于 Docker version 20.x.x 表示安装成功。
-## 二、项目容器化
+
+::: warning 遇到问题？
+如果 `docker pull` 下载很慢或失败，请先配置 [国内镜像源](./mirror.md)
+:::
+
+## 二、核心概念速览
+
+在开始之前，先理解 3 个核心概念：
+
+| 概念 | 类比 | 说明 |
+|------|------|------|
+| **镜像 (Image)** | 安装包 | 包含应用代码和环境的只读模板 |
+| **容器 (Container)** | 运行中的程序 | 镜像的运行实例，可以启动/停止 |
+| **Dockerfile** | 安装说明书 | 描述如何构建镜像的文本文件 |
+
+```
+📦 Dockerfile  →  🖼️ 镜像 (Image)  →  🚀 容器 (Container)
+   (配方)           (蛋糕模具)           (做出来的蛋糕)
+```
+
+## 三、项目容器化
 ### 1. 创建 Dockerfile
 >在 Express 项目根目录下创建一个名为 `Dockerfile` 的文件：
 ```Dockerfile
@@ -93,7 +126,10 @@ CMD ["pm2-runtime", "src/app.js"]
 :::
 
 ### 2. 构建 Docker 镜像
-将项目上传到服务器，并进入**项目目录**后运行以下命令  
+
+**准备工作：** 将项目代码上传到服务器（可使用 FTP、Git 或 scp 命令）
+
+进入**项目目录**（Dockerfile 所在目录）后运行以下命令  
 ```bash
 docker build -t express-app:latest .
 
