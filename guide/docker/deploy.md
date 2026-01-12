@@ -9,10 +9,8 @@ Docker 是一个容器化平台，可以将应用程序和其依赖打包成一�
 **好处：** 在你电脑上能跑的程序，打包成 Docker 镜像后，在任何服务器上都能跑，再也不用担心「在我电脑上明明可以的」这种问题！
 :::
 
-::: tip 🗺️ 阅读顺序建议
-1. **本文 (deploy.md)** - Docker 安装 + 项目部署（核心）
-2. [镜像源配置](./mirror.md) - 解决下载慢的问题
-3. [常用命令](./command.md) - 日常运维查阅
+::: tip 🗺️ 建议先看
+如果 `docker pull` 下载很慢，请先配置 [国内镜像源](./mirror.md)
 :::
 
 ## 一、安装 Docker
@@ -33,11 +31,7 @@ sudo systemctl enable docker
 # 验证安装
 docker --version
 ```
-输出类似于 Docker version 20.x.x 表示安装成功。
-
-::: warning 遇到问题？
-如果 `docker pull` 下载很慢或失败，请先配置 [国内镜像源](./mirror.md)
-:::
+输出类似于 `Docker version 20.x.x` 表示安装成功。
 
 ## 二、核心概念速览
 
@@ -141,7 +135,7 @@ docker build -t &lt;image_name&gt;:&lt;tag&gt; .
 - -t express-app:latest 为镜像命名为 express-app，版本为 latest
 - . 表示 Dockerfile 在当前目录
 :::
-如果安装失败 请尝试[更换镜像](../docker/mirror.md)并单独安装
+如果安装失败，请尝试 [更换镜像源](./mirror.md) 后重试
 
 ### 3. 运行容器
 

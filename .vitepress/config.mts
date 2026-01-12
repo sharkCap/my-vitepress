@@ -55,7 +55,7 @@ export default defineConfig({
         {
           text: "Docker",
           items: [
-            { text: "入门指南", link: "/guide/docker/index" },
+            { text: "入门指南", link: "/guide/docker/main" },
             { text: "镜像源", link: "/guide/docker/mirror" },
             { text: "部署", link: "/guide/docker/deploy" },
             { text: "常用命令", link: "/guide/docker/command" },
