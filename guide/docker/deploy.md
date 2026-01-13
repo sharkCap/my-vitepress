@@ -49,7 +49,157 @@ docker --version
 ```
 
 ## 三、项目容器化
-### 1. 创建 Dockerfile
+
+### 前端项目（React/Vue）
+
+前端项目有两种部署方式：
+
+| 方式 | 说明 | 适用场景 |
+|------|------|---------|
+| **多阶段构建（推荐）** | 在 Docker 中执行 build，输出纯净镜像 | CI/CD、生产环境 |
+| **仅打包产物** | 本地 build 后只上传 dist | 快速部署、带宽有限 |
+
+#### 方式一：多阶段构建（推荐）
+
+```Dockerfile
+# 阶段1：构建
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# 复制依赖文件
+COPY package*.json ./
+
+# 安装依赖
+RUN npm config set registry https://registry.npmmirror.com/ && \
+    npm install
+
+# 复制源码并构建
+COPY . .
+RUN npm run build
+
+# 阶段2：生产镜像
+FROM nginx:alpine
+
+# 复制构建产物到 Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 复制自定义 Nginx 配置（可选）
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+::: tip 多阶段构建的好处
+- ✅ 最终镜像只包含 `dist` + Nginx，体积很小（约 20MB）
+- ✅ 不包含 node_modules，更安全
+- ✅ 构建环境和运行环境分离
+:::
+
+**构建和运行：**
+```bash
+# 构建镜像
+docker build -t react-app:latest .
+
+# 运行容器
+docker run -d -p 80:80 --name react-container react-app:latest
+```
+
+#### 方式二：仅上传 dist（简单快速）
+
+本地执行 `npm run build`，只把 `dist` 目录上传到服务器：
+
+```Dockerfile
+FROM nginx:alpine
+
+# 复制本地构建好的 dist 目录
+COPY dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+```bash
+# 本地构建
+npm run build
+
+# 上传 dist 和 Dockerfile 到服务器，然后构建镜像
+docker build -t react-app:latest .
+```
+
+#### 前端路由配置（SPA）
+
+如果使用 React Router / Vue Router 的 history 模式，需要配置 Nginx：
+
+创建 `nginx.conf`：
+```nginx
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # 支持前端路由
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 静态资源缓存
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+修改 Dockerfile：
+```Dockerfile
+FROM nginx:alpine
+COPY dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+#### 前端 + 后端 API 代理
+
+如果前端需要调用后端 API，在 `nginx.conf` 中添加代理：
+
+```nginx
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API 代理到后端容器
+    location /api {
+        proxy_pass http://express-container:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+::: warning ⚠️ 注意
+使用容器名 `express-container` 需要前后端容器在同一 Docker 网络中！
+```bash
+docker network create app-net
+docker run -d --name express-container --network app-net express-app
+docker run -d --name react-container --network app-net -p 80:80 react-app
+```
+:::
+
+---
+
+### 后端项目（Express/Node.js）
+
+#### 1. 创建 Dockerfile
 >在 Express 项目根目录下创建一个名为 `Dockerfile` 的文件：
 ```Dockerfile
 # 基于 PM2 的官方镜像
@@ -119,7 +269,7 @@ CMD ["pm2-runtime", "src/app.js"]
 3. 其他部分：安装依赖、复制项目文件等，保持不变。
 :::
 
-### 2. 构建 Docker 镜像
+#### 2. 构建 Docker 镜像
 
 **准备工作：** 将项目代码上传到服务器（可使用 FTP、Git 或 scp 命令）
 
