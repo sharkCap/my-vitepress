@@ -94,6 +94,36 @@ sudo docker run -d \
 | `-e MONGO_INITDB_ROOT_USERNAME` | 管理员用户名 |
 | `-e MONGO_INITDB_ROOT_PASSWORD` | 管理员密码 |
 
+::: details 📦 数据持久化的两种方式
+
+**方式一：绑定挂载（Bind Mount）**
+```bash
+-v /data/mongodb:/data/db
+```
+
+**方式二：命名卷（Named Volume）**
+```bash
+-v mongo_data:/data/db
+```
+
+**对比：**
+
+| 对比项 | 绑定挂载 `/宿主机路径:/容器路径` | 命名卷 `卷名:/容器路径` |
+|--------|--------------------------------------|----------------------------|
+| 存储位置 | 你指定的目录 | Docker 管理 (`/var/lib/docker/volumes/`) |
+| 需要手动创建目录 | ✅ 是 | ❌ 否，自动创建 |
+| 直接访问文件 | ✅ 方便 | ⚠️ 需要 `docker volume` 命令 |
+| 权限问题 | ⚠️ 可能有冲突 | ✅ Docker 自动处理 |
+| 推荐场景 | 需要直接查看/备份数据 | 只需要持久化 |
+
+**命名卷常用命令：**
+```bash
+docker volume ls                    # 查看所有卷
+docker volume inspect mongo_data    # 查看卷详情
+docker volume rm mongo_data         # 删除卷（数据会丢失！）
+```
+:::
+
 #### 多容器场景（与 Express 配合）
 
 如果你的 Express 也运行在 Docker 中，建议使用内部网络：
